@@ -1,0 +1,20 @@
+<h2>Cart Items</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add Item</button>
+</form>
+
+<hr>
+
+<h3>Current Items:</h3>
+<ul>
+  {% for item in items %}
+    <li>{{ item.product.name }} — {{ item.quantity }}</li>
+  {% empty %}
+    <li>No items added yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'cart_checkout' %}">Proceed to Checkout</a>
