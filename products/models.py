@@ -5,9 +5,13 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     sku = models.CharField(max_length=50, unique=True)
-    category = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
+    
+    CATEGORIES = [('electronics', 'Electronics'), ('clothes', 'Clothes'),
+                  ('grocery', 'Grocery')]
+    
+    category = models.CharField(max_length=50, choices=CATEGORIES)
 
             
     def reduce_stock(self, quantity):

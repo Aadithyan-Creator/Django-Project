@@ -7,7 +7,7 @@
 </head>
 <body class="p-4 bg-light">
   <div class="container">
-    <h3>Are you sure you want to delete "{{ cart.product.name }}"?</h3>
+    <h3>Are you sure you want to delete "{{ cart_item.product.name }}"?</h3>
     <form method="post">
       {% csrf_token %}
       <button type="submit" class="btn btn-danger">Yes, delete</button>

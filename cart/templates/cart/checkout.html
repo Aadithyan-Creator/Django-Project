@@ -50,9 +50,33 @@
         </form>
       </div>
 
+      <div class="text-center mt-4">
+        <form method="post">
+          {% csrf_token %}
+          <input type="text" name="coupon_code" class="px-5" placeholder="Enter Discount Coupon">
+          <button type="submit" class="btn btn-primary">Apply</button>
+        </form>
+
+        {%if discount_applied %}
+          <p class="text-sucess">Coupon Applied! Discount Total: {{discount_total}}</p>
+        {% elif  invalid_coupon %}
+          <p class="text-danger">Invalid Coupon Code.</p>
+        {%endif%}
+      </div>
+    
+
       {% else %}
       <p class="text-center text-muted">Your cart is empty.</p>
       {% endif %}
+
+      <div class="text-center">
+        <p>Grand Total: {{ cart.final_amount }}</p>
+        {% if coupon %}
+            <p>Coupon {{ coupon.coupon_code }} applied! Final Total: {{ final_total }}</p>
+        {% else %}
+            <p>Final Total: {{ final_total }}</p>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

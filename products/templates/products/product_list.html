@@ -7,17 +7,33 @@
 </head>
 <body class="p-4 bg-light">
 <div class="container">
-    <h1 class="mb-4">Grocery Products</h1>
-    <a href="{% url 'cart_list' %}" class="btn btn-primary mb-3">View Cart</a>
+    <h1 class="text-center mb-5 mt-3">{{ category|title }}</h1>
+
+    <!-- Category Navigation -->
+    <div class="text-center mb-4">
+        {% for c in categories %}
+            <a href="{% url 'product_list_by_category' c %}" class="btn btn-dark btn-sm m-1">
+                {{ c|title }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Product Cards -->
     <div class="row">
         {% for product in products %}
         <div class="col-md-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body text-center">
-                    <h5 class="card-title"><a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a></h5>
+                    <h5 class="card-title">
+                        <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">
+                            {{ product.name }}
+                        </a>
+                    </h5>
                     <p>Price: ₹{{ product.price }}</p>
                     <p>Stock: {{ product.stock }}</p>
-                    <form method="POST" action="{% url 'add_to_cart' product.pk %}">
+                    <p><strong>{{ product.description }}</strong></p>
+                    
+                    <form method="POST" action="{% url 'add_to_cart' product.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success btn-sm" {% if product.stock == 0 %}disabled{% endif %}>
                             {% if product.stock == 0 %}Out of Stock{% else %}Add to Cart{% endif %}
@@ -26,6 +42,8 @@
                 </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center">No products available in this category.</p>
         {% endfor %}
     </div>
 </div>
