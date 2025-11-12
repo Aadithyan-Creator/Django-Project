@@ -8,12 +8,40 @@
 <body class="p-4 bg-light">
   <div class="container">
     <h2 class="mb-4">{{ title }}</h2>
-    <form method="post">
+
+
+    <form method="post" class="mb-4">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit" class="btn btn-success">Save</button>
-      <a href="{% url 'cart_list' %}" class="btn btn-secondary">Back</a>
+      <a href="{% url 'cart_list' %}" class="btn btn-secondary">Back to Cart</a>
     </form>
+
+    <hr>
+
+
+    <h3 class="mb-3">Current Items</h3>
+    {% if items %}
+      <ul class="list-group">
+        {% for item in items %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ item.product.name }} — Quantity: {{ item.quantity }}
+            <span class="badge bg-primary rounded-pill">₹{{ item.final_price|floatformat:2 }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+
+
+      <div class="mt-3 text-end">
+        <h5>Cart Total: ₹{{ cart.grand_total }}</h5>
+      </div>
+    {% else %}
+      <p>No items added yet.</p>
+    {% endif %}
+
+    <div class="mt-4">
+      <a href="{% url 'cart_checkout' %}" class="btn btn-dark">Proceed to Checkout</a>
+    </div>
   </div>
 </body>
 </html>

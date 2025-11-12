@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout</title>
+  <title>Cart / Checkout</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -12,12 +12,13 @@
 <div class="container py-5">
   <div class="card shadow-sm">
     <div class="card-body">
-      <h2 class="mb-4 text-center">Checkout Summary</h2>
+      <h2 class="mb-4 text-center">Cart Summary</h2>
 
-      {% if cart %}
-      <table class="table table-bordered text-center align-middle">
-        <thead class="table-secondary">
+      {% if items %}
+      <table class="table table-hover table-bordered align-middle text-center">
+        <thead class="table-dark">
           <tr>
+            <th>#</th>
             <th>Product</th>
             <th>Quantity</th>
             <th>Price (₹)</th>
@@ -25,58 +26,66 @@
           </tr>
         </thead>
         <tbody>
-          {% for item in cart.items.all %}
+          {% for item in items %}
           <tr>
+            <td>{{ forloop.counter }}</td>
             <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.subtotal }}</td>
+            <td>₹{{ item.price|floatformat:2 }}</td>
+            <td>₹{{ item.final_price_amount|floatformat:2 }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
 
-      <div class="text-end">
-        <p><strong>Total Price:</strong> ₹{{ cart.total_price }}</p>
-        <p><strong>Total Discount:</strong> ₹{{ cart.total_discount }}</p>
-        <h4><strong>Final Amount:</strong> ₹{{ cart.final_amount }}</h4>
+      <div class="row mt-3 justify-content-end">
+        <div class="col-md-6 text-end">
+          <form method="post" class="d-flex justify-content-end mb-2">
+            {% csrf_token %}
+            <input type="text" name="coupon_code" placeholder="Enter Coupon Code" class="form-control me-2" style="max-width:200px;">
+            <button type="submit" class="btn btn-success">Apply</button>
+          </form>
+
+          {% if discount_applied %}
+            <p class="text-success mb-0">
+              Coupon Applied: {{ request.session.applied_coupon }} - 
+              {% if coupon_data.type == "percentage" %}
+                {{ coupon_data.amount }}%
+              {% else %}
+                ₹{{ coupon_data.amount }}
+              {% endif %}
+            </p>
+            <p class="text-success mb-0">
+              You Saved: ₹{{ saved_amount|floatformat:2 }}
+            </p>
+          {% elif invalid_coupon %}
+            <p class="text-danger mb-0">Invalid or Expired Coupon</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-6 text-end"></div>
+        <div class="col-md-6 text-end">
+          <h4>Total: ₹{{ total|floatformat:2 }}</h4>
+          {% if discount_applied %}
+            <h5>Grand Total after Discount: ₹{{ discounted_total|floatformat:2 }}</h5>
+          {% endif %}
+        </div>
       </div>
 
       <div class="text-center mt-4">
-        <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-success px-5">Confirm Order</button>
-          <a href="{% url 'cart_add_items' %}" class="btn btn-outline-secondary ms-2">Back to Cart</a>
-        </form>
+        <a href="{% url 'all_products' %}" class="btn btn-outline-secondary ms-2">Continue Shopping</a>
+        <a href="{% url 'cart_list' %}" class="btn btn-primary ms-2">Proceed to Checkout</a>
       </div>
-
-      <div class="text-center mt-4">
-        <form method="post">
-          {% csrf_token %}
-          <input type="text" name="coupon_code" class="px-5" placeholder="Enter Discount Coupon">
-          <button type="submit" class="btn btn-primary">Apply</button>
-        </form>
-
-        {%if discount_applied %}
-          <p class="text-sucess">Coupon Applied! Discount Total: {{discount_total}}</p>
-        {% elif  invalid_coupon %}
-          <p class="text-danger">Invalid Coupon Code.</p>
-        {%endif%}
-      </div>
-    
 
       {% else %}
-      <p class="text-center text-muted">Your cart is empty.</p>
+      <p class="text-center text-muted mt-4">Your cart is empty.</p>
+      <div class="text-center mt-3">
+        <a href="{% url 'all_products' %}" class="btn btn-primary">Shop Now</a>
+      </div>
       {% endif %}
 
-      <div class="text-center">
-        <p>Grand Total: {{ cart.final_amount }}</p>
-        {% if coupon %}
-            <p>Coupon {{ coupon.coupon_code }} applied! Final Total: {{ final_total }}</p>
-        {% else %}
-            <p>Final Total: {{ final_total }}</p>
-        {% endif %}
-      </div>
     </div>
   </div>
 </div>
