@@ -7,6 +7,9 @@ def account_list(request):
     accounts = Account.objects.filter(is_deleted=False)
     return render(request, 'accounts/index.html', {'accounts': accounts})
 
+def login_account(request):
+    accounts = Account.objects.get(user=request.user)
+
 
 
 def account_create(request):

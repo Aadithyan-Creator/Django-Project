@@ -39,11 +39,13 @@
         <td>{{ item.product.name }}</td>
         <td>{{ item.quantity }}</td>
         <td>₹{{ item.price|floatformat:2 }}</td>
-        <td>₹{{ item.final_price|floatformat:2 }}</td>
+        <td>₹{{ item.final_price_display|floatformat:2 }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+    <p class="text-center mt-3">Your cart is empty.</p>
   {% endif %}
 
   <div class="text-center mt-4">
