@@ -53,3 +53,16 @@ def order_detail(request, pk):
         "order": order,
         "items": items
     })
+    
+    
+def order_delete(request, pk):
+    user = request.user
+    order = get_object_or_404(Order, pk=pk, user=user)
+
+    if request.method == "POST":
+        order.delete()
+        return redirect("order_list")
+
+    return render(request, "order/order_confirm_delete.html", {"order": order})
+
+
